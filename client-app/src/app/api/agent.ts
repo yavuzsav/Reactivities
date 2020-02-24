@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { IActivity } from "../models/activity";
+import { IActivity, IActivitiesEnvelope } from "../models/activity";
 import { history } from "../..";
 import { toast } from "react-toastify";
 import { IUser, IUserFormValues } from "../models/user";
@@ -53,7 +53,7 @@ const requests = {
 };
 
 const Activities = {
-  list: (): Promise<IActivity[]> => requests.get("/activities"),
+  list: (params: URLSearchParams): Promise<IActivitiesEnvelope> => axios.get("/activities", {params: params}).then(sleep(1000)).then(responseBody),
   details: (id: string) => requests.get(`/activities/${id}`),
   create: (activity: IActivity) => requests.post("/activities", activity),
   update: (activity: IActivity) => requests.put(`/activities/${activity.id}`, activity),
@@ -76,7 +76,8 @@ const Profiles = {
   updateProfile: (profile: Partial<IProfile>) => requests.put(`/profiles`, profile),
   follow: (userName: string) => requests.post(`/profiles/${userName}/follow`, {}),
   unfollow: (userName: string) => requests.del(`/profiles/${userName}/follow`),
-  listFollowings: (userName: string, predicate: string) => requests.get(`/profiles/${userName}/follow?predicate=${predicate}`)
+  listFollowings: (userName: string, predicate: string) => requests.get(`/profiles/${userName}/follow?predicate=${predicate}`),
+  listActivities: (userName: string, predicate: string) => requests.get(`/profiles/${userName}/activities?predicate=${predicate}`)
 }
 
 export default {
